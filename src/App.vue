@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <h1>Simon Says</h1>
     <div class="container">
       <div class="panel">
         <div
@@ -24,6 +25,9 @@
         ></div>
       </div>
       <div class="buttons">
+        <h2 class="heading" v-if="say !== ''">
+          {{ say === "simon" ? "Саймон говорит" : "Повторите за Саймоном" }}
+        </h2>
         <button class="btn" type="button" @click="toggleModal">Правила</button>
         <button class="btn" type="button" @click="startGame" v-if="!counter">
           Начать
@@ -67,10 +71,10 @@
             <h2>Правила игры</h2>
             <hr />
             <p>
-              Раунд в игре состоит из комбинации одной или несколько кнопок,
-              освещенных в случайном порядке. После чего Вам надо повторить
-              последовательность кнопок. В случае успеха, вы переходите в
-              следующий раунд, в противном случае игра закончится
+              Раунд в игре состоит в том, что Саймон освещает кнопки в случайном
+              порядке, после чего Вам нужно повторить последовательность кнопок.
+              С каждым новым раундом количество кнопок увеличивается. В случае
+              не совпадения игра заканчивается
             </p>
           </div>
         </div>
@@ -92,6 +96,7 @@ export default {
     complexity: 1500,
     modal: false,
     audio: 1,
+    say: "",
   }),
   methods: {
     toggleModal() {
@@ -158,6 +163,7 @@ export default {
         this.randomPanels.push(this.getRandomPanels(this.panelItems));
         this.counter = 0;
         this.canClick = false;
+        this.say = "";
       }
     },
 
@@ -169,12 +175,14 @@ export default {
       this.canClick = false;
       this.sequenseToGuess = [...this.randomPanels];
       this.counter += 1;
+      this.say = "simon";
 
       for (const panel of this.randomPanels) {
         await this.flash(panel);
       }
 
       this.canClick = true;
+      this.say = "player";
     },
   },
   mounted() {
@@ -191,6 +199,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   margin-top: 60px;
   background-color: #fafafa;
+}
+
+h1 {
+  margin-left: 50%;
+  transform: translateX(-25%);
 }
 
 .container {
@@ -258,7 +271,7 @@ label {
   display: flex;
   flex-wrap: wrap;
   border-radius: 100%;
-  box-shadow: 0 5px 25px rgba(54, 54, 54, 0.9);
+  box-shadow: 5px 5px 25px rgba(54, 54, 54, 0.6);
   background-color: rgb(136, 136, 136);
 }
 
